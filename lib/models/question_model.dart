@@ -1,7 +1,7 @@
-class Question {
+class QuestionModel {
   String question;
   bool answer;
-  Question({this.answer, this.question});
+  QuestionModel({this.answer, this.question});
 
   // Question({this.answer, this.question}); // Sozsuz emes, named parameter
   // Question({@required this.answer, @required this.question}); // Sozsuz parametler berilish kerek
