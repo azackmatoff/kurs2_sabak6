@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kurs2_sabak6/constants/app_colors.dart';
 import 'package:kurs2_sabak6/constants/app_text_styles.dart';
+import 'package:kurs2_sabak6/modules/home/controllers/home_controller.dart';
 import 'package:kurs2_sabak6/repository/question_repo.dart';
+import 'package:kurs2_sabak6/widgets/custom_button.dart';
+import 'package:kurs2_sabak6/widgets/custom_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -11,6 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final HomeController _homeController = Get.put(HomeController());
+
   List<Icon> scoreKeeper = [];
 
   bool _isLast = false;
@@ -34,18 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final _finished = questionBrain.isFinished();
 
     if (_finished) {
-      showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Finished!'),
-          content: const Text('Ayagina jettin!'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            )
-          ],
-        ),
+      CustomDialog.showCustomDialog(
+        parentContext: context,
+        title: 'Аягына чыкты',
+        content: Text('Жаңыдан башта!'),
       );
 
       questionBrain.reset();
@@ -69,23 +67,23 @@ class _HomeScreenState extends State<HomeScreen> {
       // uzun joldoru: _result == false, je bolboso _result != true
 
       if (_result) {
+        _homeController.addCorrectIcon();
         //
-        scoreKeeper.add(Icon(
-          Icons.check,
-          color: Colors.green,
-        ));
+        // scoreKeeper.add(Icon(
+        //   Icons.check,
+        //   color: Colors.green,
+        // ));
       } else {
+        _homeController.addInCorrectIcon();
         //
-        scoreKeeper.add(Icon(
-          Icons.close,
-          color: Colors.red,
-        ));
+        // scoreKeeper.add(Icon(
+        //   Icons.close,
+        //   color: Colors.red,
+        // ));
       }
       questionBrain.nextQuestion();
       setState(() {});
     }
-
-    // print('answer: $answer');
   }
 
   @override
@@ -104,8 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(10.0),
                 child: Center(
                   child: Text(
-                    // quizBrain.getQuestionText(),
-                    // 'test',
                     // QuestionBrain().getQuestion(), //Versiya 1,
                     questionBrain.getQuestion(), //Versiya 2
                     textAlign: TextAlign.center,
@@ -116,47 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             _isLast
                 ? const SizedBox.shrink()
-                : Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: FlatButton(
-                        textColor: Colors.white,
-                        color: Colors.green,
-                        child: Text(
-                          'Туура',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                          ),
-                        ),
-                        onPressed: () {
-                          //The user picked true.
-                          checkAnswer(true);
-                        },
-                      ),
-                    ),
+                : CustomButton(
+                    onPressed: () => checkAnswer(true),
+                    buttonText: 'Туура',
                   ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(15.0),
-                child: FlatButton(
-                  color: Colors.red,
-                  child: Text(
-                    _isLast ? 'Кайрадан башта' : 'Туура эмес',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    //The user picked false.
-                    checkAnswer(false);
-                  },
-                ),
-              ),
+            CustomButton(
+              onPressed: () => checkAnswer(false),
+              buttonText: _isLast ? 'Кайрадан башта' : 'Туура эмес',
+              buttonBgColor: Colors.red,
             ),
-            Row(
-              children: scoreKeeper,
+            Obx(
+              () => Row(
+                children: _homeController.icons,
+              ),
             ),
             const SizedBox(height: 40.0),
           ],

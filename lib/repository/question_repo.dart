@@ -1,6 +1,10 @@
+import 'package:get/get.dart';
 import 'package:kurs2_sabak6/models/question_model.dart';
+import 'package:kurs2_sabak6/modules/home/controllers/home_controller.dart';
 
 class QuestionRepository {
+  final HomeController _homeController = Get.find();
+
   int index = 0;
 
   List<QuestionModel> questions = [
@@ -53,6 +57,7 @@ class QuestionRepository {
 
   void reset() {
     index = 0;
+    _homeController.resetIcons();
   }
 
   /// local, jergiluktuu
