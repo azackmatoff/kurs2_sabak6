@@ -1,9 +1,8 @@
-import 'package:get/get.dart';
 import 'package:kurs2_sabak6/models/question_model.dart';
 import 'package:kurs2_sabak6/modules/home/controllers/home_controller.dart';
 
 class QuestionRepository {
-  final HomeController _homeController = Get.find();
+  final HomeController _homeController = HomeController.findHomeCont;
 
   int index = 0;
 
@@ -57,7 +56,7 @@ class QuestionRepository {
 
   void reset() {
     index = 0;
-    _homeController.resetIcons();
+    _homeController.resetAndStart();
   }
 
   /// local, jergiluktuu
@@ -65,4 +64,5 @@ class QuestionRepository {
 
 // global, but jerden jetkenge mumkun (dostupen)
 
-final QuestionRepository questionBrain = QuestionRepository();
+/// ozgoruu....
+final QuestionRepository questionRepo = QuestionRepository();
